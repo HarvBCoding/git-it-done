@@ -1,30 +1,9 @@
-var getUserRepos = function(user) {
-    // format the github api url
-    var apiUrl = "https://api.github.com/users/" + user + "/repos";
-
-    // make a request to the url from github
-    fetch(apiUrl).then(function(response) {
-        // check if the request was succesful by using the ok propery; if the ok property is false user will receive an alert
-        if (response.ok) {
-            response.json().then(function(data) {
-                displayRepos(data, user);
-            });
-        } else {
-            alert("Error: GitHub User Not Found");
-        }
-    })
-    .catch(function(error) {
-        // catch() getting chained onto the end
-        alert("Unable to connect to GitHub")
-    })
-};
-
-
 // variables to store a reference to the form 
 var userFormEl = document.querySelector("#user-form");
 var nameInputEl = document.querySelector("#username");
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
+
 
 var formSubmitHandler = function(event) {
     event.preventDefault();
@@ -41,18 +20,36 @@ var formSubmitHandler = function(event) {
     console.log(event);
 };
 
+var getUserRepos = function(user) {
+    // format the github api url
+    var apiUrl = "https://api.github.com/users/" + user + "/repos";
+
+    // make a request to the url from github
+    fetch(apiUrl).then(function(response) {
+        // check if the request was succesful by using the ok propery; if the ok property is false user will receive an alert
+        if (response.ok) {
+            response.json().then(function(data) {
+                displayRepos(data, user);
+            });
+        } else {
+            alert("Error: GitHub User Not Found");
+        }
+    })
+    .catch(function(error) {
+        // catch() method is the fetch API's way of handling network errors
+        alert("Unable to connect to GitHub");
+    });
+};
+
 // function will accept both the array of repository data and the term we searched for as parameters
 var displayRepos = function(repos, searchTerm) {
-    console.log(repos);
-    console.log(searchTerm);
+
     // check if api returned any repos
     if (repos.length === 0) {
         repoContainerEl.textContent = "No repositories found.";
         return;
     }
 
-    // clear old content
-    repoContainerEl.textContent = "";
     repoSearchTerm.textContent = searchTerm;
 
     // loop over repos; in the for loop we take each repo(repos[i]) and write some of its data to the page
